@@ -1,0 +1,119 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import PdfViewer from '../PDFViewers/PdfViewer';
+import PdfList from '../PDFViewers/PdfList';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+
+import ResumePdf from "./Resume1.pdf"
+
+export default function CourseInfo() {
+    const Assignmnetsregex = /.*-A.*$/;
+    const Notesregex = /.*-N.*$/;
+    const Othersregex = /.*-Ot.*$/;
+    const Examsregex = /.*-E.*$/;
+    const Outlinesregex = /.*-Ou.*$/;
+
+    const { course } = useParams();
+    const navigate = useNavigate();
+
+    const [value, setValue] = useState(0);
+    const [selectedPdf, setSelectedPdf] = useState(null);
+    const [viewPdf, setViewPdf] = useState(false);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+
+    const Assignments = [
+        { name: 'Resume', url: ResumePdf },
+    ];
+    const Outlines = [
+        { name: 'Resume', url: ResumePdf },
+    ];
+    const Exams = [
+        { name: 'Resume', url: ResumePdf },
+    ];
+    const Notes = [
+        { name: 'Resume', url: ResumePdf },
+    ];
+    const Others = [
+        { name: 'Resume', url: ResumePdf },
+    ];
+
+    const handlePdfClick = (pdfUrl) => {
+        setSelectedPdf(pdfUrl);
+        setViewPdf(true);
+    };
+
+    const goBack = () => {
+        setViewPdf(false);
+    };
+
+    return (
+        <div>
+            <h1>{course}</h1>
+            <a>any missing documnet? Upload it</a>
+            <Link to={`/upload/${course}`}>Upload</Link>
+            {viewPdf ? (
+                <button onClick={goBack}>Go Back</button>
+            ) : null}
+            <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tab label="Assignments" />
+                <Tab label="Outlines" />
+                <Tab label="Exams" />
+                <Tab label="Notes" />
+                <Tab label="Other" />
+            </Tabs>
+            {value === 0 && (
+                <div className='container'>
+                    {viewPdf ? (
+                        <PdfViewer selectedPdf={selectedPdf} />
+                    ) : (
+                        <PdfList pdfFiles={Assignments} handlePdfClick={handlePdfClick} />
+                    )}
+                </div>
+            )}
+            {value === 1 && (
+                <div className='container'>
+                    {viewPdf ? (
+                        <PdfViewer selectedPdf={selectedPdf} />
+                    ) : (
+                        <PdfList pdfFiles={Outlines} handlePdfClick={handlePdfClick} />
+                    )}
+                </div>
+            )}
+            {value === 2 && (
+                <div className='container'>
+                    {viewPdf ? (
+                        <PdfViewer selectedPdf={selectedPdf} />
+                    ) : (
+                        <PdfList pdfFiles={Exams} handlePdfClick={handlePdfClick} />
+                    )}
+                </div>
+            )}
+            {value === 3 && (
+                <div className='container'>
+                    {viewPdf ? (
+                        <PdfViewer selectedPdf={selectedPdf} />
+                    ) : (
+                        <PdfList pdfFiles={Notes} handlePdfClick={handlePdfClick} />
+                    )}
+                </div>
+            )}
+            {value === 4 && (
+                <div className='container'>
+                    {viewPdf ? (
+                        <PdfViewer selectedPdf={selectedPdf} />
+                    ) : (
+                        <PdfList pdfFiles={Others} handlePdfClick={handlePdfClick} />
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
