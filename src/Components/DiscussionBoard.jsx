@@ -14,72 +14,70 @@ export default function DiscussionBoard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const response = await axios.get(`${url}/Comments`, {
-                    params: {
-                        department: department
-                    },
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setComments(response.data);
-            } catch (err) {
-                console.error('Error fetching comments:', err);
-                setError('Failed to load comments.');
-            }
-        };
-
-        fetchComments();
-    }, [department]);
-
+    const fetchComments = async () => {
+        try {
+            const response = await axios.get(`${url}/Comments`, {
+                params: { department: department },
+                // headers: { Authorization: `Bearer ${token}` }
+            });
+            setComments(response.data); // Adjust this based on the actual structure
+            setLoading(false); // Set loading to false after fetching
+        } catch (err) {
+            console.error('Error fetching comments:', err);
+            setError('Failed to load comments.');
+            setLoading(false); // Ensure loading is false in case of error
+        }
+    };
+    fetchComments();
     useEffect(() => {
         const joinChatRoom = async (department) => {
-            if (connection) return;
+            //         if (connection) return;
 
-            try {
-                const conn = new signalR.HubConnectionBuilder()
-                    .withUrl(`${url}/chat`)
-                    .configureLogging(signalR.LogLevel.Information)
-                    .build();
+            //         try {
+            //             const conn = new signalR.HubConnectionBuilder()
+            //                 .withUrl(`${url}/chat`, {
+            //                     transport: signalR.HttpTransportType.WebSockets
+            //                 })
+            //                 .configureLogging(signalR.LogLevel.Information)
+            //                 .build();
 
-                conn.on("ReceiveMessage", (comment) => {
-                    setComments(prevComments => [...prevComments, comment]);
-                });
+            //             conn.on("ReceiveMessage", (comment) => {
+            //                 setComments(prevComments => [...prevComments, comment]);
+            //             });
 
-                await conn.start();
-                await conn.invoke("JoinSpecificGroup", department);
+            //             await conn.start();
+            //             await conn.invoke("JoinSpecificGroup", department);
 
-                setConnection(conn);
-                setLoading(false);
-            } catch (err) {
-                console.error('Error connecting to chat room:', err);
-                setError('Failed to connect to the chat room.');
-                setLoading(false);
-            }
+            //             setConnection(conn);
+            //             setLoading(false);
+            //         } catch (err) {
+            //             console.error('Error connecting to chat room:', err);
+            //             setError('Failed to connect to the chat room.');
+            //             setLoading(false);
+            //         }
         };
 
         joinChatRoom(department);
 
-        return () => {
-            if (connection) {
-                connection.stop();
-            }
-        };
+        //     return () => {
+        //         if (connection) {
+        //             connection.stop();
+        //         }
+        //     };
     }, [department, connection]);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        // e.preventDefault();
 
-        if (!newComment.trim()) return;
+        // if (!newComment.trim()) return;
 
-        try {
-            await connection.invoke("SendMessage", department, newComment);
-            setNewComment('');
-        } catch (err) {
-            console.error('Error sending message:', err);
-            setError('Failed to send message.');
-        }
+        // try {
+        //     await connection.invoke("SendMessage", department, newComment);
+        //     setNewComment('');
+        // } catch (err) {
+        //     console.error('Error sending message:', err);
+        //     setError('Failed to send message.');
+        // }
     };
 
     return (

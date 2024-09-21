@@ -53,13 +53,14 @@ export default function Upload() {
         formData.append('file', pdfData);
 
         try {
-            const response = await axios.post(`${url}/upload`, formData, {
+            console.log(url,formData)
+            const response = await axios.post(`${url}/Upload`, formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`
+                     'Content-Type': 'multipart/form-data'
+                    , Authorization: `Bearer ${token}`
                 }
             });
-            setMessage(response.data.message);
+            setMessage(response.data);
         } catch (error) {
             setMessage('Error uploading file');
             console.error('Error uploading file:', error);
