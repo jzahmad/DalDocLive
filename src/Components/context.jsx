@@ -7,8 +7,8 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("accessToken") || "");
     const navigate = useNavigate();
-    // const url = "https://yb3ojxjsqulip3zh276dsk6vxy0bhlds.lambda-url.us-east-1.on.aws";
-    const url = "http://localhost:5241";
+    const url = "https://yb3ojxjsqulip3zh276dsk6vxy0bhlds.lambda-url.us-east-1.on.aws";
+    // const url = "http://localhost:5241";
 
     const loginAction = async (data) => {
         try {
