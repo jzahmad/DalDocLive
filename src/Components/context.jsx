@@ -7,7 +7,7 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("accessToken") || "");
     const navigate = useNavigate();
-    const url = "http://daldocbackenda2-env.eba-qkszxcwn.us-east-1.elasticbeanstalk.com";
+    const url = "https://yb3ojxjsqulip3zh276dsk6vxy0bhlds.lambda-url.us-east-1.on.aws";
 
     const loginAction = async (data) => {
         try {
