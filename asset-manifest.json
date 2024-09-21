@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/DalDocLive/static/css/main.249f05b6.css",
-    "main.js": "/DalDocLive/static/js/main.f042bfaf.js",
+    "main.js": "/DalDocLive/static/js/main.f196ebe3.js",
     "static/js/453.d855a71b.chunk.js": "/DalDocLive/static/js/453.d855a71b.chunk.js",
     "index.html": "/DalDocLive/index.html",
     "main.249f05b6.css.map": "/DalDocLive/static/css/main.249f05b6.css.map",
-    "main.f042bfaf.js.map": "/DalDocLive/static/js/main.f042bfaf.js.map",
+    "main.f196ebe3.js.map": "/DalDocLive/static/js/main.f196ebe3.js.map",
     "453.d855a71b.chunk.js.map": "/DalDocLive/static/js/453.d855a71b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.249f05b6.css",
-    "static/js/main.f042bfaf.js"
+    "static/js/main.f196ebe3.js"
   ]
 }
