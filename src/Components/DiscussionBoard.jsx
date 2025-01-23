@@ -14,70 +14,77 @@ export default function DiscussionBoard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchComments = async () => {
-        try {
-            const response = await axios.get(`${url}/Comments`, {
-                params: { department: department },
-                // headers: { Authorization: `Bearer ${token}` }
-            });
-            setComments(response.data); // Adjust this based on the actual structure
-            setLoading(false); // Set loading to false after fetching
-        } catch (err) {
-            console.error('Error fetching comments:', err);
-            setError('Failed to load comments.');
-            setLoading(false); // Ensure loading is false in case of error
-        }
-    };
-    fetchComments();
+    // Fetch comments when the department or component mounts
     useEffect(() => {
-        const joinChatRoom = async (department) => {
-            //         if (connection) return;
-
-            //         try {
-            //             const conn = new signalR.HubConnectionBuilder()
-            //                 .withUrl(`${url}/chat`, {
-            //                     transport: signalR.HttpTransportType.WebSockets
-            //                 })
-            //                 .configureLogging(signalR.LogLevel.Information)
-            //                 .build();
-
-            //             conn.on("ReceiveMessage", (comment) => {
-            //                 setComments(prevComments => [...prevComments, comment]);
-            //             });
-
-            //             await conn.start();
-            //             await conn.invoke("JoinSpecificGroup", department);
-
-            //             setConnection(conn);
-            //             setLoading(false);
-            //         } catch (err) {
-            //             console.error('Error connecting to chat room:', err);
-            //             setError('Failed to connect to the chat room.');
-            //             setLoading(false);
-            //         }
+        const fetchComments = async () => {
+            try {
+                const response = await axios.get(`${url}/Comments`, {
+                    params: { department: department },
+                    // headers: { Authorization: `Bearer ${token}` } // Uncomment if authentication is needed
+                });
+                setComments(response.data); // Adjust this based on the actual structure of response
+                setLoading(false); // Set loading to false after fetching
+            } catch (err) {
+                console.error('Error fetching comments:', err);
+                setError('Failed to load comments.');
+                setLoading(false); // Ensure loading is false in case of error
+            }
         };
 
-        joinChatRoom(department);
+        fetchComments();
+    }, [department, url, token]); // Re-run on department change or URL/token change
 
-        //     return () => {
-        //         if (connection) {
-        //             connection.stop();
-        //         }
-        //     };
-    }, [department, connection]);
+    // Set up SignalR connection for real-time chat
+    useEffect(() => {
+        const joinChatRoom = async () => {
+            if (connection) return;
 
+            try {
+                const conn = new signalR.HubConnectionBuilder()
+                    .withUrl(`${url}/chat`, {
+                        transport: signalR.HttpTransportType.WebSockets
+                    })
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
+
+                conn.on("ReceiveMessage", (comment) => {
+                    setComments(prevComments => [...prevComments, comment]);
+                });
+
+                await conn.start();
+                await conn.invoke("JoinSpecificGroup", department);
+
+                setConnection(conn);
+                setLoading(false);
+            } catch (err) {
+                console.error('Error connecting to chat room:', err);
+                setError('Failed to connect to the chat room.');
+                setLoading(false);
+            }
+        };
+
+        joinChatRoom();
+
+        return () => {
+            if (connection) {
+                connection.stop();
+            }
+        };
+    }, [department, url, connection]);
+
+    // Handle new comment submission
     const handleSubmit = async (e) => {
-        // e.preventDefault();
+        e.preventDefault();
 
-        // if (!newComment.trim()) return;
+        if (!newComment.trim()) return;
 
-        // try {
-        //     await connection.invoke("SendMessage", department, newComment);
-        //     setNewComment('');
-        // } catch (err) {
-        //     console.error('Error sending message:', err);
-        //     setError('Failed to send message.');
-        // }
+        try {
+            await connection.invoke("SendMessage", department, newComment);
+            setNewComment('');
+        } catch (err) {
+            console.error('Error sending message:', err);
+            setError('Failed to send message.');
+        }
     };
 
     return (
@@ -147,7 +154,7 @@ const styles = {
     },
     commentCard: {
         padding: '16px',
-        backgroundColor: '#2c2c2c', // Slightly lighter dark background for better contrast
+        backgroundColor: '#2c2c2c',
         borderRadius: '8px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
         transition: 'transform 0.2s ease-in-out',
@@ -156,10 +163,10 @@ const styles = {
         },
     },
     commentText: {
-        color: '#e0e0e0', // Light gray for better contrast
+        color: '#e0e0e0',
     },
     commentTimestamp: {
-        color: '#a0a0a0', // Gray for timestamp
+        color: '#a0a0a0',
     },
     commentForm: {
         display: 'flex',
